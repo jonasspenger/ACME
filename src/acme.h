@@ -60,7 +60,7 @@ private:
   unsigned minLength;
   unsigned maxLength;
   unsigned minFrequency;
-  unsigned maxDistance;
+  double maxDistance;
   unsigned mode; // mode 0, 1, 2: silent, statistics, motif
   std::vector<unsigned> statistics;
   cast::Search search;
@@ -76,6 +76,7 @@ public:
        unsigned min_length,
        unsigned max_length,
        unsigned min_frequency,
-       unsigned max_distance,
-       unsigned mode);
+       double max_distance,
+       unsigned mode,
+       std::function<double(char, char)> distMeasure);
 };

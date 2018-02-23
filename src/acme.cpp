@@ -30,8 +30,9 @@ ACME::ACME(std::istream &is,
            unsigned minLength,
            unsigned maxLength,
            unsigned minFrequency,
-           unsigned maxDistance,
-           unsigned mode) :
+           double maxDistance,
+           unsigned mode,
+           std::function<double(char, char)> distMeasure) :
            is(is),
            os(os),
            minLength(minLength),
@@ -51,7 +52,7 @@ ACME::ACME(std::istream &is,
   STIndex stIndex(seq);
 
   // construct cast search object
-  this->search = cast::Search(stIndex, this->maxDistance);
+  this->search = cast::Search(stIndex, this->maxDistance, distMeasure);
 
   // init statistics vector
   this->statistics = std::vector<unsigned>(101); // Motifs are not expected to be longer than 100

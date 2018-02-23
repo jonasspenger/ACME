@@ -1,3 +1,26 @@
+# Note
+This specific implementation extends the algorithm by also providing the SAXMINDIST
+as a distance measure for motifs extraction.
+
+Example:
+```
+echo "lmecfikmkkllkhfeeddfnomifefhiggfgjmmkkifeecgpnliggefeeednplhedbkplifeehdhijmkjijhffcdpmlhfeeimlikkjhjihiebfdfinnkgefjjgfedlpnhfddccooljgeefhjklkggjiiihhhijfjhdadilkjjimmmjihfedcjonmiecegmmjgfedenplgeffbckiilnnlgdddgonkcbkefjjiikmmlkigigijhgebhijjijlkmjkkjhhghffe" | build/ACME -d 0.5 -f 10 -sm abcdefghijklmnop -s -minl 10
+# Motif Models (motif : frequency : [list of occurrences]):
+jjjihhihhh 10 [ 145 148 147 95 146 251 140 141 94 230 ]
+jklllkiihg 10 [ 72 225 246 73 5 226 165 247 249 248 ]
+jklllkjigg 10 [ 72 225 246 73 5 226 165 247 6 248 ]
+jklllkjihf 10 [ 72 225 246 73 5 226 165 247 6 248 ]
+jklllkjjgf 10 [ 72 225 246 73 5 226 165 247 6 248 ]
+jllkkkiihg 10 [ 73 95 5 226 92 247 249 6 227 248 ]
+jllllkjihh 10 [ 225 246 5 226 92 247 249 6 227 248 ]
+llljiihihh 10 [ 251 141 249 227 94 248 250 93 229 228 ]
+llljiiiihh 10 [ 140 141 249 227 94 248 250 93 229 228 ]
+# Statistics (motif length : number of motifs):
+# 10 : 9
+# total number of motifs: 9
+
+```
+
 # ACME
 This is a reimplementation of the serial execution (not the parallel) algorithm (ACME / CAST Motifs Extraction) proposed in:
 > Sahli, Majed, Essam Mansour, and Panos Kalnis. "ACME: A scalable parallel system for extracting frequent patterns from a very long sequence." The VLDB Journal 23.6 (2014): 871-893.

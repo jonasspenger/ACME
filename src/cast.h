@@ -68,15 +68,17 @@ namespace cast {
 struct Search {
   public:
     Search(STIndex& stIndex,
-           const unsigned maxDistance);
+           const double maxDistance,
+           std::function<double(char, char)> distMeasure);
     Search() {}
-    unsigned maxDistance;
+    double maxDistance;
     STIndex stIndex;
     seqan::String<unsigned> pmFrequency;
     seqan::String<unsigned> pmLength;
     std::vector<BranchElement> branchVector;
     std::vector<char> alphabet;
     unsigned alphabetSize;
+    std::function<double(char, char)> distMeasure;
 };
 
 bool goRight(Search& search);

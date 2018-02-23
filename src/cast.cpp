@@ -103,8 +103,9 @@ seqan::String<char> getMotif(Search& search) {
 
 // A representation of the search space trie (all possible motifs) and relevant
 // parameters for the CAST algorithm.
-Search::Search(STIndex& stIndex, const unsigned maxDistance) :
+Search::Search(STIndex& stIndex, const double maxDistance, std::function<double(char, char)> distMeasure) :
 maxDistance(maxDistance), stIndex(stIndex) {
+  this->distMeasure = distMeasure;
   // annotate suffix tree with the frequency (number of occurrences of
   // represented subsequence in sequence) and the length of each nodes
   // represented subsequence in property maps.
@@ -144,7 +145,7 @@ maxDistance(maxDistance), stIndex(stIndex) {
   std::vector<OccurrenceElement> occurrenceVector;
   occurrenceVector.push_back(OccurrenceElement{
     stIterator, // iterator of approximately matching node of suffix tree
-    0 // distance of occurrence from current search_pair to motif pattern
+    0.0 // distance of occurrence from current search_pair to motif pattern
   });
   // The branch vector containins branchelements. A branchelement represents
   // a node of the search space trie (i.e. a motif candidate), and contains
@@ -188,10 +189,9 @@ void extend(Search& search, unsigned alphabetIndex) {
         // if the first character of the traversed edge to child
         // does not equal the currently expanded character alphabetIndex
         // increment the new distance by 1 (or the distance given by distance measure)
-        unsigned new_distance = occurrenceElement.distance;
-        if (seqan::parentEdgeFirstChar(child) != search.alphabet[alphabetIndex]
-            && seqan::parentEdgeFirstChar(child) != search.alphabet[alphabetIndex]) {
-          new_distance += 1;
+        double new_distance = occurrenceElement.distance;
+        if (seqan::parentEdgeFirstChar(child) != search.alphabet[alphabetIndex]) {
+          new_distance += search.distMeasure(seqan::parentEdgeFirstChar(child), search.alphabet[alphabetIndex]);
         }
         // if the new_distance is less than the distance threshold
         // add the child as a new occurrence to occurrenceArray
@@ -205,14 +205,17 @@ void extend(Search& search, unsigned alphabetIndex) {
     // else if the length of the sequence represented by the occurrenceElement
     // is longer than the current search branch (motif)
     } else {
-      unsigned new_distance = occurrenceElement.distance;
+      double new_distance = occurrenceElement.distance;
       STIterator child = occurrenceElement.stIter;
       // if the expanded character (alphabetIndex) does not equal
       // the corresponding character of the edge from the occurrence node to child
-      // increment the new distance by 1
+      // increment the new distance by 1 (or the distance given by distance measure)
       if (seqan::parentEdgeLabel(child)[branchElement.length - seqan::parentRepLength(child)]
         != search.alphabet[alphabetIndex]) {
-        new_distance += 1;
+        new_distance += search.distMeasure(
+          seqan::parentEdgeLabel(child)[branchElement.length - seqan::parentRepLength(child)],
+          search.alphabet[alphabetIndex]
+        );
       }
       // if the new_distance is less than the distance threshold
       // add the child as a new occurrence to occurrenceArray

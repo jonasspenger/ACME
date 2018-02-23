@@ -90,8 +90,8 @@ int main(int argc, char const ** argv) {
 
   // The distance threshold.
   seqan::addOption(parser, seqan::ArgParseOption(
-    "d", "distance", "Maximum allowed hamming distance for approximate matches.",
-    seqan::ArgParseArgument::INTEGER, "INT"));
+    "d", "distance", "Maximum allowed distance for approximate matches (hamming distance if not otherwise specified).",
+    seqan::ArgParseArgument::DOUBLE, "DOUBLE"));
   seqan::setDefaultValue(parser, "d", "0");
   seqan::setMinValue(parser, "d", "0");
 
@@ -115,6 +115,12 @@ int main(int argc, char const ** argv) {
   seqan::setValidValues(parser, "m", "silent statistics motif");
   seqan::setDefaultValue(parser, "m", "motif");
 
+  // If SAX MINDIST should be used
+  seqan::addOption(parser, seqan::ArgParseOption(
+    "sm", "saxmindist", "If selected, uses the SAX MINDIST instead of the Hamming distance. "
+    "The SAX alphabet must be passed as a string in the correct order.",
+    seqan::ArgParseArgument::STRING, "STR"));
+
   // Hide the version-check option in help.
   seqan::hideOption(parser, "version-check");
 
@@ -133,6 +139,19 @@ int main(int argc, char const ** argv) {
     std::cerr << seqan::getAppName(parser) << ": you must specify either -input or -stream." << "\n";
     return seqan::ArgumentParser::PARSE_ERROR;
   }
+  if (seqan::isSet(parser, "saxmindist")) {
+    // check for only unique characters in alphabet
+    std::string a;
+    seqan::getOptionValue(a, parser, "saxmindist");
+    for (std::size_t i = 0; i < a.length(); i++) {
+      for (std::size_t j = i+1; j < a.length(); j++) {
+        if (a[i] == a[j]) {
+          std::cerr << seqan::getAppName(parser) << ": the alphabet can only consist of unique characters." << "\n";
+          return seqan::ArgumentParser::PARSE_ERROR;
+        }
+      }
+    }
+  }
 
 
   // Extract option values.
@@ -140,7 +159,7 @@ int main(int argc, char const ** argv) {
   seqan::getOptionValue(filename, parser, "input");
   unsigned frequency = 0; // minimum frequency (no. of occurrence) of approximate matches
   seqan::getOptionValue(frequency, parser, "frequency");
-  unsigned distance = 0; // maximum hamming distance of approximate matches to motif
+  double distance = 0.0; // maximum hamming distance of approximate matches to motif
   seqan::getOptionValue(distance, parser, "distance");
   unsigned minLength = 0; // minimum motif length
   seqan::getOptionValue(minLength, parser, "minlength");
@@ -152,6 +171,15 @@ int main(int argc, char const ** argv) {
   if (modeOpt == "silent") mode = 0;
   if (modeOpt == "statistics") mode = 1;
   if (modeOpt == "motif") mode = 2;
+  std::function<double(char, char)> distMeasure;
+  if (seqan::isSet(parser, "saxmindist")) {
+    std::string alphabet;
+    seqan::getOptionValue(alphabet, parser, "saxmindist");
+    distMeasure = distanceFunction::getFunction("saxmindist" ,alphabet);
+  } else {
+    distMeasure = distanceFunction::getFunction("hamming", "");
+  }
+
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -177,8 +205,8 @@ int main(int argc, char const ** argv) {
   // Motif discovery.
   //////////////////////////////////////////////////////////////////////////////
 
-  // input stream, output stream, min_length, max_length, min_frequency, max_distance, mode
-  ACME::ACME(*is, std::cout, minLength, maxLength, frequency, distance, mode);
+  // input stream, output stream, min_length, max_length, min_frequency, max_distance, mode, distMeasure
+  ACME::ACME(*is, std::cout, minLength, maxLength, frequency, distance, mode, distMeasure);
 
   return 0;
 }

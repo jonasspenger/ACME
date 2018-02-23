@@ -29,5 +29,5 @@
 
 struct OccurrenceElement {
     STIterator stIter;
-    unsigned distance;
+    double distance;
 };
