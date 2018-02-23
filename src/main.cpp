@@ -24,7 +24,6 @@
 
 
 #include "acme.h"
-#include "distance.hpp"
 #include <seqan/arg_parse.h>
 #include <seqan/basic.h>
 #include <iostream>
