@@ -14,10 +14,10 @@ include_directories (${SEQAN_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} include)
 add_definitions (${SEQAN_DEFINITIONS} ${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
 
 # Set header files
-set(HEADER_FILES src/cast.h src/acme.h src/occurrenceelement.h src/branchelement.h src/distance.hpp)
+set(HEADER_FILES src/cast.h src/acme.h src/occurrenceelement.h src/branchelement.h)
 
 # Set source files
-set(SOURCE_FILES src/cast.cpp src/acme.cpp src/main.cpp src/distance.hpp)
+set(SOURCE_FILES src/cast.cpp src/acme.cpp src/main.cpp)
 
 # Set c++ flags
 SET ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN_CXX_FLAGS} -W -Wall -Wstrict-aliasing -pedantic -Wno-long-long -Wno-variadic-macros" )
