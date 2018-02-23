@@ -22,7 +22,7 @@ llljiiiihh 10 [ 140 141 249 227 94 248 250 93 229 228 ]
 ```
 
 # ACME
-This is a reimplementation of the serial execution (not the parallel) algorithm (ACME / CAST Motifs Extraction) proposed in:
+This is a reimplementation of the serial execution (not the parallel) (and not restricted to left or right-maximal motifs) algorithm (ACME / CAST Motifs Extraction) proposed in:
 > Sahli, Majed, Essam Mansour, and Panos Kalnis. "ACME: A scalable parallel system for extracting frequent patterns from a very long sequence." The VLDB Journal 23.6 (2014): 871-893.
 
 ## Prerequisites
